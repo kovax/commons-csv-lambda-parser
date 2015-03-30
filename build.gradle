@@ -1,0 +1,32 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'project-report'
+
+group = 'org.apache.commons'
+version = '0.1-SNAPSHOT'
+
+description = "Apache Commons CVS Lamba Parser implemented in Java 8 and Groovy"
+
+buildDir = 'target'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    mavenLocal()
+    mavenCentral() //equivalent to 'maven { url "http://repo.maven.apache.org/maven2" }'
+    jcenter()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // We use the latest groovy 2.x version for building this library
+    compile 'org.codehaus.groovy:groovy-all:2.3.10'
+    compile 'org.apache.commons:commons-csv:1.1'
+
+    // We use the awesome Spock testing and specification framework
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.3'
+    testCompile 'junit:junit:4.11'
+}
