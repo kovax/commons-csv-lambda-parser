@@ -8,24 +8,26 @@ import groovy.transform.CompileStatic;
 class CSVGroovyParser {
 
 
-    public static void parse(final URL url, final Charset charset, final CSVFormat format, Closure cl) throws IOException {
-        executeLoop( CSVParser.parse(url, charset, format), cl )
+    public static void parse(final URL url, final Charset charset, final CSVFormat format, Closure block) throws IOException {
+        executeLoop( CSVParser.parse(url, charset, format), block )
     }
 
-    public static void parse(final File file, final Charset charset, final CSVFormat format, Closure cl) throws IOException {
-        executeLoop( CSVParser.parse(file, charset, format), cl )
+    public static void parse(final File file, final Charset charset, final CSVFormat format, Closure block) throws IOException {
+        executeLoop( CSVParser.parse(file, charset, format), block )
     }
 
-    public static void parse(final String string, final CSVFormat format, Closure cl) throws IOException {
-        executeLoop( CSVParser.parse(string, format), cl )
+    public static void parse(final String string, final CSVFormat format, Closure block) throws IOException {
+        executeLoop( CSVParser.parse(string, format), block )
     }
-    
-    private static void executeLoop(CSVParser parser, Closure cl) {
-        if( parser.headerMap == null) throw new IllegalArgumentException("Header must be set");
+
+    private static void executeLoop(CSVParser parser, Closure block) {
 
         for(CSVRecord record : parser) {
-            cl(record.toMap())
+            if( parser.headerMap == null) block(record)
+            else                          block(record.toMap())
         }
+
+        parser.close()
     }
 
 

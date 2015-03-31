@@ -53,12 +53,15 @@ class CSVParserTests extends Specification {
     def "CSVGroovyParser without header"() {
         setup:
         def csv = 'a,b,c'
-        
+
         when:
-        CSVGroovyParser.parse(csv, CSVFormat.DEFAULT) { println it }
+        CSVRecord record
+        CSVGroovyParser.parse(csv, CSVFormat.DEFAULT) { record = it }
 
         then:
-        thrown(IllegalArgumentException)
+        record[0] == 'a'
+        record[1] == 'b'
+        record[2] == 'c'
     }
  
 
@@ -70,18 +73,34 @@ class CSVParserTests extends Specification {
 
         def format = CSVFormat.RFC4180.withIgnoreSurroundingSpaces().withHeader()
 
-        when: "CSVGroovyParser reads the string using a Closure"
+        when: "CSVGroovyParser reads the line using a Closure"
 
-        def map
-        CSVGroovyParser.parse(csv, format) { map = it }
+        Map record
+        CSVGroovyParser.parse(csv, format) { record = it }
 
         then: "It gives a map the the Closure"
-        map['f1'] == 'a'
-        map.'f2' == 'b'
-        map.f3 == 'c'
-        map.f4 == 'd d'
+        record['f1'] == 'a'
+        record.'f2' == 'b'
+        record.f3 == 'c'
+        record.f4 == 'd d'
     }
-    
+
+
+    def "CSVLambdaParser without header"() {
+        setup:
+        def csv = 'a,b,c'
+
+        when:
+        CSVRecord record
+        CSVLambdaParser.parse(csv, CSVFormat.DEFAULT) { record = it }
+
+        then:
+        record[0] == 'a'
+        record[1] == 'b'
+        record[2] == 'c'
+    }
+
+
     def "CSVLambdaParser with header"() {
         given: "CSV string with header"
 
@@ -90,16 +109,16 @@ class CSVParserTests extends Specification {
 
         def format = CSVFormat.RFC4180.withIgnoreSurroundingSpaces().withHeader()
 
-        when: "CSVGroovyParser reads the string using a Closure"
+        when: "CSVLambdaParser reads the line using a Lambda funtion"
 
-        def map
-        CSVLambdaParser.parse(csv, format) { map = it }
+        Map record
+        CSVLambdaParser.parse(csv, format) { record = it }
 
-        then: "It gives a map the the Closure"
-        map['f1'] == 'a'
-        map.'f2' == 'b'
-        map.f3 == 'c'
-        map.f4 == 'd d'
+        then: "It gives a map the the Lambda"
+        record['f1'] == 'a'
+        record.'f2' == 'b'
+        record.f3 == 'c'
+        record.f4 == 'd d'
     }
 
 }
